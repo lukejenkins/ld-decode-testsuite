@@ -364,7 +364,7 @@ if [ ! -f "$out.mkv" ]; then
 		ffcmd+=(-flags +ildct+ilme)
 	fi
 	if $ivtc; then
- 		filters="$filters,fieldmatch=order=tff:field=bottom,decimate"
+ 		filters="$filters,fieldmatch=order=tff:field=bottom:mchroma=0:chroma=0,decimate"
  	fi
 	for stream in "${audiostreams[@]}"; do
 		ffcmd+=(-codec:a:$stream copy)
