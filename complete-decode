@@ -24,6 +24,7 @@ Options:
   -s FRAMES        Skip initial frames (ld-decode -s FRAMES)
   -f DECODER       Select chroma decoder (ld-chroma-decoder -f DECODER)
   -d               Deinterlace before encoding
+  -T               Perform Inverse Telecene (IVTC) before encoding
   -c CRF           Set CRF for x264 (default 16)
   -n               Dry-run mode; show what will be done
 
@@ -52,6 +53,7 @@ digital=true
 dropouts=true
 x264crf=16
 deinterlace=false
+ivtc=false
 decoder=
 discmap=false
 dryrun=false
@@ -83,6 +85,9 @@ while getopts "3ABCc:Ddf:mnps:V" c; do
 	d)
 		deinterlace=true
 		;;
+	T)
+ 		ivtc=true
+ 		;;
 	f)
 		decoder="$OPTARG"
 		;;
@@ -358,6 +363,9 @@ if [ ! -f "$out.mkv" ]; then
 	if ! $deinterlace; then
 		ffcmd+=(-flags +ildct+ilme)
 	fi
+	if $ivtc; then
+ 		filters="$filters,fieldmatch=order=tff:field=bottom,decimate"
+ 	fi
 	for stream in "${audiostreams[@]}"; do
 		ffcmd+=(-codec:a:$stream copy)
 	done
